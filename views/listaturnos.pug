@@ -1,0 +1,41 @@
+extends layout
+
+block content
+  h2.text-center.my-4 Agenda de Turnos
+
+  // Seleccionar un médico
+  form(action="/listaturnos" method="GET")
+    .form-group
+      label(for="medico-select") Selecciona un Médico:
+      select.form-control(name="medico_id" required onchange="this.form.submit()")
+        option(value="") -- Selecciona un médico --
+        each medico in medicos
+          option(value=medico.medico_id selected=(medico.medico_id == selectedMedico)) #{medico.nombre} #{medico.apellido} - #{medico.especialidad}
+
+  // Tabla de turnos
+  if turnos && turnos.length > 0
+    table.table.table-striped.mt-4
+      thead
+        tr
+          th Paciente
+          th Fecha
+          th Hora
+          th Estado
+          th Acciones
+      tbody
+        each turno in turnos
+          tr
+            td #{turno.nombre_paciente} #{turno.apellido_paciente}
+            td #{turno.fecha}
+            td #{turno.hora}
+            td
+              form(action=`/cambiar-estado-turno/${turno.turno_id}` method="POST")
+                select.form-control(name="estado" onchange="this.form.submit()")
+                  option(value="reservado" selected=turno.estado == 'reservado') Reservado
+                  option(value="confirmado" selected=turno.estado == 'confirmado') Confirmado
+                  option(value="cancelado" selected=turno.estado == 'cancelado') Cancelado
+            td
+              form(action=`/eliminar-turno/${turno.turno_id}` method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este turno?');")
+                button.btn.btn-danger.btn-sm(type="submit") Eliminar
+  else
+    p.mt-4 Selecciona un médico para ver sus turnos.

@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  h2.text-center.my-4 Gestión de Médicos
+
+  // Formulario de búsqueda
+  form(action="/medicos" method="GET" class="form-inline mb-3")
+    .form-group.mr-2
+      label(for="nombre" class="mr-2") Nombre:
+      input.form-control(type="text" name="nombre" placeholder="Buscar por nombre" value=nombre)
+    
+    .form-group.mr-2
+      label(for="especialidad" class="mr-2") Especialidad:
+      input.form-control(type="text" name="especialidad" placeholder="Buscar por especialidad" value=especialidad)
+
+    button.btn.btn-primary(type="submit") Buscar
+    a.btn.btn-secondary.ml-2(href="/medicos") Mostrar Todos
+
+  // Botón para cargar un nuevo médico
+  a(href="/nuevo-medico" class="btn btn-success mb-3") 
+    button(type="button" class="btn btn-success") Cargar Nuevo Médico
+
+  // Tabla de resultados con scroll
+  div.table-responsive(style="max-height: 400px; overflow-y: auto;")
+    table.table.table-bordered.table-striped.table-hover
+      thead.thead-dark
+        tr
+         
+          th Nombre
+          th Apellido
+          th Especialidad
+          th Matrícula
+          th Estado
+          th Acciones
+      tbody
+        if medicos && medicos.length
+          each medico in medicos
+            tr
+           
+              td= medico.nombre
+              td= medico.apellido
+              td= medico.especialidad
+              td= medico.matricula
+              td= medico.estado
+              td
+                a(href=`/editar-medico/${medico.medico_id}` class="btn btn-warning btn-sm mr-2")
+                  i.fas.fa-edit 
+                  | Editar
+                a(href=`/borrar-medico/${medico.medico_id}` class="btn btn-danger btn-sm")
+                  i.fas.fa-trash 
+                  | Borrar
+        else
+          tr
+            td(colspan="7" class="text-center") No se encontraron médicos.

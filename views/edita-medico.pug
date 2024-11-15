@@ -1,0 +1,25 @@
+
+
+extends layout
+
+block content
+  .container
+    h1 Editar Médico
+    form(action=`/editar-medico/${medico.medico_id}`, method="POST")
+      .form-group
+        label(for="nombre") Nombre
+        input#nombre.form-control(type="text", name="nombre", value=medico.nombre, required)
+      .form-group
+        label(for="apellido") Apellido
+        input#apellido.form-control(type="text", name="apellido", value=medico.apellido, required)
+      .form-group
+        label(for="matricula") Matrícula
+        input#matricula.form-control(type="text", name="matricula", value=medico.matricula, required)
+      .form-group
+        label(for="estado") Estado
+        input#estado.form-control(type="text", name="estado", value=medico.estado, required)
+      .form-group
+        label(for="especialidad") Especialidad
+        input#especialidad.form-control(type="text", name="especialidad", value=medico.especialidad, required)
+      button.btn.btn-primary(type="submit") Guardar
+    a.btn.btn-secondary.mt-3(href="/medicos") Volver a la lista de médicos

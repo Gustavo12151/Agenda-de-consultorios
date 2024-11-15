@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  h2.text-center.my-4 Cargar Nuevo Médico
+
+  if mensajeError
+    .alert.alert-danger.text-center= mensajeError
+
+  form(action="/nuevo-medico" method="POST" class="mt-4")
+    .form-group
+      label(for="nombre") Nombre:
+      input.form-control(type="text" name="nombre" required)
+
+    .form-group
+      label(for="apellido") Apellido:
+      input.form-control(type="text" name="apellido" required)
+
+    .form-group
+      label(for="matricula") Matrícula:
+      input.form-control(type="text" name="matricula" required)
+
+    .form-group
+      label(for="estado") Estado:
+      select.form-control(name="estado" required)
+        option(value="Activo") Activo
+        option(value="Inactivo") Inactivo
+
+    .form-group
+      label(for="especialidad") Especialidad:
+      input.form-control(type="text" name="especialidad" required)
+
+    button.btn.btn-primary(type="submit") Guardar Médico

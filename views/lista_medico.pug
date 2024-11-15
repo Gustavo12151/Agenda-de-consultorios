@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  h2.text-center.my-4 Lista de Médicos
+
+  table.table.table-striped.table-bordered
+    thead
+      tr
+        th ID
+        th Nombre
+        th Apellido
+        th Especialidad
+        th Estado
+        th Acción
+    tbody
+      each medico in medicos
+        tr
+          td= medico.medico_id
+          td= medico.nombre
+          td= medico.apellido
+          td= medico.especialidad
+          td= medico.estado
+          td
+            a.btn.btn-primary.btn-sm(href=`/agendar-turno?medico_id=${medico.medico_id}`) Agendar Médico

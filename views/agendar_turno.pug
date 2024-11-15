@@ -1,0 +1,97 @@
+extends layout
+
+block content
+  h2.text-center.my-4 Agendar un Turno
+
+  // Mostrar alerta si hay un mensaje de error
+  if error
+    script.
+      alert('!{error}')
+
+  form(action="/agendar-turno" method="POST" class="p-3 border border-primary rounded")
+    h3 Datos del Paciente
+    .form-group
+      label(for="nombre") Nombre
+      input.form-control(type="text" name="nombre" required placeholder="Nombre del paciente")
+
+    .form-group
+      label(for="apellido") Apellido
+      input.form-control(type="text" name="apellido" required placeholder="Apellido del paciente")
+
+    .form-group
+      label(for="dni") DNI
+      input.form-control(type="text" name="dni" required placeholder="Documento del paciente")
+
+    .form-group
+      label(for="contacto") Contacto
+      input.form-control(type="text" name="contacto" required placeholder="Teléfono o Email")
+
+    .form-group
+      label(for="obra_social") Obra Social
+      input.form-control(type="text" name="obra_social" placeholder="Obra social (opcional)")
+
+    h3 Datos del Turno
+    .form-group
+      label(for="medico") Médico
+      select.form-control(name="medico_id" id="medico-select" required onchange="cargarHorarios()")
+        option(value="") Selecciona un médico
+        each medico in medicos
+          option(value=medico.medico_id selected=(medico.medico_id == selectedMedico)) #{medico.nombre} #{medico.apellido} - #{medico.especialidad}
+
+    .form-group
+      label(for="fecha") Fecha
+      input.form-control(type="date" name="fecha" id="fecha" required onchange="cargarHorarios()")
+
+    .form-group
+      label(for="hora") Hora
+      select.form-control(name="hora" id="horario-select" required)
+        option(value="") Selecciona una hora
+
+    button.btn.btn-primary(type="submit") Agendar Turno
+
+  script.
+    // Establece la fecha mínima permitida como la fecha actual
+    const fechaInput = document.getElementById('fecha');
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0'); // Mes en formato MM
+    const dd = String(hoy.getDate()).padStart(2, '0'); // Día en formato DD
+    const fechaMinima = `${yyyy}-${mm}-${dd}`;
+    fechaInput.setAttribute('min', fechaMinima);
+
+    // Verifica que la fecha seleccionada sea a partir de hoy y solo de lunes a viernes
+    fechaInput.addEventListener('input', function() {
+      const fechaSeleccionada = new Date(this.value);
+      const diaSemana = fechaSeleccionada.getUTCDay();
+      
+      // Si es sábado (6) o domingo (0), muestra un mensaje de error y borra el valor
+      if (diaSemana === 6 || diaSemana === 0) {
+        alert("Solo puedes seleccionar fechas de lunes a viernes.");
+        this.value = '';
+      }
+    });
+
+    // Función para cargar horarios disponibles basados en el médico y la fecha seleccionada
+    function cargarHorarios() {
+      const medicoId = document.querySelector('#medico-select').value;
+      const fecha = document.querySelector('#fecha').value;
+
+      if (!medicoId || !fecha) {
+        document.getElementById('horario-select').innerHTML = '<option value="">Selecciona una hora</option>';
+        return;
+      }
+
+      fetch(`/horarios-disponibles/${medicoId}?fecha=${fecha}`)
+        .then(response => response.json())
+        .then(data => {
+          const horarioSelect = document.getElementById('horario-select');
+          horarioSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+          data.horarios.forEach(hora => {
+            const option = document.createElement('option');
+            option.value = hora;
+            option.textContent = hora;
+            horarioSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error al cargar horarios:', error));
+    }
